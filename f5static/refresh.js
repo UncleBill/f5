@@ -41,6 +41,12 @@ var reloadTag = function( attcher ){
         return;         // done;
     } else {
         var src = element.src;
+        var pieces = src.split(".");
+        var ext = pieces[ pieces.length - 1 ];
+        if( ext === "js" ){
+            window.location.reload();       // if changed file is js, reload page
+            return;
+        }
         element.src = src;
     }
 }
