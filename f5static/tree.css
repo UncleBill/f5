@@ -23,27 +23,29 @@ ul li {
 }
 ul li a {
     color:#4183C4;
-    text-decoration:none
+    text-decoration:none;
 }
-ul li a:hover {
-    text-decoration:underline
+ul li a:hover,
+ul li a:focus{
+    text-decoration:underline;
+    color:#f55;
 }
-ul li span {
+ul li .icon_holder {
     background-image:url(../f5static/icons.png);
     background-repeat:no-repeat;
     display:inline-block;
     width:20px;
     height:16px;
-    margin:0 3px
+    margin:0 3px;
 }
 ul li .folder {
 }
-ul li .file { background-position:0px -20px; }    /*defaultfile*/
-ul li .ft_zip { background-position:0px -45px; }
-ul li .ft_html { background-position:-20px 0px; } /*textfile*/
-ul li .ft_css { background-position:-20px -20px; }
-ul li .ft_javascript { background-position:-20px -45px; }
-ul li .ft_image { background-position:-40px 0px; }/*imagefile*/
+.file-tree .file .icon_holder{ background-position:0px -20px; }    /*defaultfile*/
+.file-tree .ft_zip .icon_holder{ background-position:0px -45px; }
+.file-tree .ft_html .icon_holder{ background-position:-20px 0px; } /*textfile*/
+.file-tree .ft_css .icon_holder{ background-position:-20px -20px; }
+.file-tree .ft_javascript .icon_holder{ background-position:-20px -45px; }
+.file-tree .ft_image .icon_holder{ background-position:-40px 0px; }/*imagefile*/
 .subdir ul {
     box-shadow:0 0 5px #ccc inset;
     background: #fff;

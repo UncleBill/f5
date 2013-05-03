@@ -47,23 +47,22 @@ var setUrlContainer = function( url ){
 //selectHandleFunc();
 
 // image holder handling
+// ---------------------
 $("<div id='image_holder' />").appendTo($("body")).hide();
+var $image_holder = $("#image_holder");
 
 $(".ft_image").each( function( index ){
-    var $target = $(this).parent()
+    var $target = $(this);
     $target.hover( function(){
-        console.log( "hovering " );
-        var $href =  $(this).find("a")[0].href;
-        console.log( $href );
-        $("#image_holder").show().html( "<img src='" + $href + "' />"  ).pos;
+        var $href =  this.href;
+        $image_holder.show().html( "<img src='" + $href + "' />"  ).pos;
     },function(){
-        $("#image_holder").hide();
-    } )
+        $image_holder.hide();
+    } );
 } );
 
 $(document).mousemove( function( event ){
-    var $holder = $("#image_holder");
     var posx = event.pageX + 20;
     var posy = event.pageY + 20;
-    $("#image_holder").css({"left":posx,"top":posy});
-} )
+    $image_holder.css({"left":posx,"top":posy});
+} );

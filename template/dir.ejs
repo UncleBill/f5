@@ -1,5 +1,7 @@
 <li class='subdir folded'>
-    <span class='folder'></span>
-    <a href='#<%= _path %>' onclick='toggleFold(this)'><%= file %></a>
+    <a class='folder' href='#<%= _path %>' onclick='toggleFold(this)'>
+        <span class="icon_holder"></span>
+        <%= file %>
+    </a>
     <%- subdir %>
 </li>
