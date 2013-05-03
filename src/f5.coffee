@@ -35,6 +35,14 @@ insertSocket = ( file )->
 res500 = (err,res)->
     res.writeHead 500,{"Content-Type":"text/plain"}
     res.end err
+
+f5DeleteFile = (file)->
+    fs.exists file,( isexists )->
+        if isexists
+            fs.unlinkSync file,(err)->
+                throw err if err
+        else return
+
 sortFiles = (realPath,files)->
     _folders = []
     _files   = []
@@ -141,10 +149,16 @@ createServer = (config)->
     _io = {sockets} = io.listen server, "log level":0
     sockets.on "connection",(socket)->
         _sockets.push socket
+        socket.on "delete",(file)->
+            f5DeleteFile file
+        socket.on "rename",(data)->
+            f5Rename data
+
     for change in ["fileCreated","fileModified","fileDeleted"]
         watcher.on change,( file )->
             for socket in _sockets
                 socket.emit "reload",file
+
     server.listen _port
     console.log "f5 is on localhost:#{_port} now."
 

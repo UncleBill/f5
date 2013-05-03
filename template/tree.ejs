@@ -12,12 +12,12 @@
         <p><a target="_blank" href="https://github.com/island205/f5">☞Fork me at github☜</a></p>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/f5static/jquery-min.js"></script>
-        <script src="/f5static/tree.js"></script>
         <script>
             var socket = io.connect(location.hostname);
             socket.on('reload', function (data) {
                 window.location.reload();
             });
         </script>
+        <script src="/f5static/tree.js"></script>
     </body>
 </html>

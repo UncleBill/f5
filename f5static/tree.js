@@ -1,3 +1,5 @@
+// fold handling
+// -------------
 var toggleFold = function (obj) { // toggle fold by toggle className
     var cn = obj.parentNode.className;
     if (/\bfolded\b/.test(cn)) { // if folded
@@ -8,7 +10,8 @@ var toggleFold = function (obj) { // toggle fold by toggle className
     obj.parentNode.className = cn.replace("  ", " ")
 }
 
-//-----------------------------------------
+// select handling
+// ---------------
 var fileLi = document.querySelectorAll("ul li:not(.subdir)");
 var seletedClassName = "seleted_item"
 var fileNum = fileLi.length;
@@ -66,3 +69,14 @@ $(document).mousemove( function( event ){
     var posy = event.pageY + 20;
     $image_holder.css({"left":posx,"top":posy});
 } );
+
+// file manage : delete
+// --------------------
+
+$(".delete").bind("click",function(){
+    var $parent = $(this).parent();
+    var file = $parent.find(".file").attr("href");
+    $parent.slideUp(function(){
+        socket.emit("delete",file);
+    });
+});

@@ -38,7 +38,9 @@ ul li .icon_holder {
     height:16px;
     margin:0 3px;
 }
-ul li .folder {
+.file-tree .delete{
+    color:#888;
+    cursor:pointer;
 }
 .file-tree .file .icon_holder{ background-position:0px -20px; }    /*defaultfile*/
 .file-tree .ft_zip .icon_holder{ background-position:0px -45px; }
