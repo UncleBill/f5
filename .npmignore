@@ -1,3 +1,7 @@
 src/
 测试/
+test/
 f5static/resources/
+Cakefile
+TODO.md
+.travis.yml
