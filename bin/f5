@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-var f5=require("../lib/f5"),
+var f5   = require("../lib/f5"),
     path = ".",
     port = 3000;
 
 var task = require('../lib/task');
 
-var init = function(){
+var run = function(){
     var argvs = process.argv;
     if (argvs[1] == "runtask") {
         task.runtasks();
@@ -21,4 +21,4 @@ var init = function(){
     }
 };
 
-init();
+run();
