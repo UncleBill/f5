@@ -23,7 +23,7 @@ insertTempl = (file, templ)->
     matchs = file.match( matchrx )
     splits = file.split( matchrx )
     if not splits.length
-        file += templ + ''
+        file += templ.join ''
     else
         index = file.length - matchs[ matchs.length - 1 ].length - splits[ splits.length - 1 ].length
         file = file[0...index] + templ.join("") + file[index...]
