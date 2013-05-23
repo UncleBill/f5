@@ -5,6 +5,17 @@ _watchcmd   = "coffee -cwo lib/ src/"
 _installcmd = "npm install -g"
 _testcmd    = "node bin/f5"
 
+build = (callback)->
+    child = exec _buildcmd, (e,s,se)->
+        if e
+            console.log e
+        else
+            console.log "build succeeded"
+            callback()
+    child.stdout.on "data",(data)->
+        console.log data
+
+
 task "watch","auto compile src to lib",->
     child = exec _watchcmd, (e,s,se)->
         if e
@@ -13,29 +24,27 @@ task "watch","auto compile src to lib",->
     child.stdout.on "data",(data)->
         console.log data
 
-task "build","compile src to lib",->
-    child = exec _buildcmd, (e,s,se)->
-        if e
-            console.log e
-    child.stdout.on "data",(data)->
-        console.log data
+
+task "build","compile src to lib", build
+
 
 task "test", "run server for test", ->
-    invoke "build"
-    child = exec _testcmd,(err,s)->
-        if err
-            console.log err
-        else
-            console.log s
-     child.stdout.on "data",(data)->
-        console.log data
+    build ->
+        child = exec _testcmd,(err,s)->
+            if err
+                console.log err
+            else
+                console.log s
+         child.stdout.on "data",(data)->
+            console.log data
+
 
 task "install","install f5 local",->
-    invoke "build"
-    child = exec _installcmd,(err,s)->
-        if err
-            console.log err
-        else
-            console.log s
-    child.stdout.on "data",(data)->
-        console.log data
+    build ->
+        child = exec _installcmd,(err,s)->
+            if err
+                console.log err
+            else
+                console.log s
+        child.stdout.on "data",(data)->
+            console.log data
