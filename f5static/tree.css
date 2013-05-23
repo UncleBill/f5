@@ -63,7 +63,9 @@ ul li .icon_holder {
     padding:7px;
     border:5px solid rgba(0,0,0,0.3);
     border-radius:5px;
-    position:absolute;
+    position:fixed;
+    right:0;
+    top:0;
     -moz-box-shadow:    1px 1px 2px 1px #666;
     -ms-box-shadow:     1px 1px 2px 1px #666;
     -o-box-shadow:      1px 1px 2px 1px #666;

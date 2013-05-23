@@ -63,13 +63,6 @@ $(".ft_image").each( function( index ){
         $image_holder.hide();
     } );
 } );
-
-$(document).mousemove( function( event ){
-    var posx = event.pageX + 20;
-    var posy = event.pageY + 20;
-    $image_holder.css({"left":posx,"top":posy});
-} );
-
 // file manage : delete
 // --------------------
 
