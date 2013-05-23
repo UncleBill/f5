@@ -100,6 +100,7 @@ createServer = (config)->
         pathname = url.parse(req.url).pathname
         realPath = decodeURIComponent _path+pathname
 
+        renderPath = realPath
         # redirect to f5static file
         # console.log 'before split',realPath
         if (realPath.split "/")[1] == 'f5static'
@@ -122,7 +123,7 @@ createServer = (config)->
                         res500 err,res
                     else
                         res.writeHead 200,{"Content-Type":types["html"]}
-                        _htmltext = renderDir realPath,files
+                        _htmltext = renderDir renderPath, files
                         res.write ejs.render(getTempl("tree.ejs"), {
                             _htmltext: _htmltext,
                             title: realPath

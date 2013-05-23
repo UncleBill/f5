@@ -80,3 +80,13 @@ $(".delete").bind("click",function(){
         socket.emit("delete",file);
     });
 });
+
+// go to parent handle
+// -------------------
+$("#parent").bind("click",function(){
+    if(location.href == location.origin+'/'){
+    $(this).css({"opacity":0.5});
+        return
+    }
+    location.href = location.origin
+})

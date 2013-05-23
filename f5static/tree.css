@@ -70,3 +70,10 @@ ul li .icon_holder {
     -webkit-box-shadow: 1px 1px 2px 1px #666;
     box-shadow:         1px 1px 2px 1px #666;
 }
+.new-tab-open{
+    display:inline-block;
+    height:11px;
+    width:11px;
+    background-image:url(../images/new-tab-view.png);
+    background-repeat:no-repeat;
+}
