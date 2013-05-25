@@ -13,6 +13,7 @@
     "watch-tree-maintained":"0.1.2",
     "socket.io":"0.9.1-1",
     "mime":"*",
+    "colors":"*",
     "ejs":"0.8.3"
   },
   "devDependencies": {},

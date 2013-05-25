@@ -1,3 +1,5 @@
+// fold handling
+// -------------
 var toggleFold = function (obj) { // toggle fold by toggle className
     var cn = obj.parentNode.className;
     if (/\bfolded\b/.test(cn)) { // if folded
@@ -8,7 +10,8 @@ var toggleFold = function (obj) { // toggle fold by toggle className
     obj.parentNode.className = cn.replace("  ", " ")
 }
 
-//-----------------------------------------
+// select handling
+// ---------------
 var fileLi = document.querySelectorAll("ul li:not(.subdir)");
 var seletedClassName = "seleted_item"
 var fileNum = fileLi.length;
@@ -47,23 +50,36 @@ var setUrlContainer = function( url ){
 //selectHandleFunc();
 
 // image holder handling
+// ---------------------
 $("<div id='image_holder' />").appendTo($("body")).hide();
+var $image_holder = $("#image_holder");
 
 $(".ft_image").each( function( index ){
-    var $target = $(this).parent()
+    var $target = $(this);
     $target.hover( function(){
-        console.log( "hovering " );
-        var $href =  $(this).find("a")[0].href;
-        console.log( $href );
-        $("#image_holder").show().html( "<img src='" + $href + "' />"  ).pos;
+        var $href =  this.href;
+        $image_holder.show().html( "<img src='" + $href + "' />"  ).pos;
     },function(){
-        $("#image_holder").hide();
-    } )
+        $image_holder.hide();
+    } );
 } );
+// file manage : delete
+// --------------------
 
-$(document).mousemove( function( event ){
-    var $holder = $("#image_holder");
-    var posx = event.pageX + 20;
-    var posy = event.pageY + 20;
-    $("#image_holder").css({"left":posx,"top":posy});
-} )
+$(".delete").bind("click",function(){
+    var $parent = $(this).parent();
+    var file = $parent.find(".file").attr("href");
+    $parent.slideUp(function(){
+        socket.emit("delete",file);
+    });
+});
+
+// go to parent handle
+// -------------------
+$("#parent").bind("click",function(){
+    if(location.href == location.origin+'/'){
+    $(this).css({"opacity":0.5});
+        return
+    }
+    location.href = location.origin
+})
