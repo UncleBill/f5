@@ -43,9 +43,23 @@ f5DeleteFile = (file)->
                 throw err if err
         else return
 
+# http://stackoverflow.com/questions/4340227/sort-mixed-alpha-numeric-array
+sortAlphaNum = (a, b)->
+    reAlpha = /[^a-zA-Z]/g
+    reNumer = /[^0-9]/g
+    aAlpha = a.replace(reAlpha, "")
+    bAlpha = b.replace(reAlpha, "")
+    if aAlpha is bAlpha
+        aNumber = parseInt(a.replace(reNumer, ""), 10)
+        bNumber = parseInt(b.replace(reNumer, ""), 10)
+        `aNumber === bNumber ? 0 : aNumber > bNumber ? 1 : -1`
+    else
+        `aAlpha > bAlpha ? 1 : -1`
+
 sortFiles = (realPath,files)->
     _folders = []
     _files   = []
+    files = files.sort sortAlphaNum
     if realPath[realPath.length-1] isnt "/"
         realPath += "/"
     for file in files
@@ -53,6 +67,7 @@ sortFiles = (realPath,files)->
             _folders.push file
         else
             _files.push file
+
     _folders.concat _files
 
 renderDir = (realPath,files)->
