@@ -11,7 +11,7 @@ build = (callback)->
             console.log e
         else
             console.log "build succeeded"
-            callback()
+            callback() if typeof callback is 'function'
     child.stdout.on "data",(data)->
         console.log data
 
