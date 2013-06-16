@@ -165,6 +165,8 @@ createServer = (config)->
     _sockets = []
     _io = {sockets} = io.listen server, "log level":0
     sockets.on "connection",(socket)->
+        _sockets = _sockets.filter (s)->
+            return  not s['disconnected']
         _sockets.push socket
         socket.on "delete",(file)->
             f5DeleteFile file
@@ -172,9 +174,11 @@ createServer = (config)->
             f5Rename data
 
     for change in ["fileCreated","fileModified","fileDeleted"]
-        watcher.on change,( file )->
-            for socket in _sockets
-                socket.emit "reload",file
+        do (chg = change) ->
+            watcher.on chg, ( file )->
+                for socket in _sockets
+                    socket.emit "reload",file
+                    # console.log 'emit reload', '--', file, '--', +(new Date), '--' ,chg
 
     server.listen _port
     console.log "f5 is on localhost:#{_port} now."
