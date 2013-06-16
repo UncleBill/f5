@@ -185,7 +185,7 @@ createServer = (config)->
 
 
 try
-    exports.version = JSON.parse(fs.readFileSync('./package.json')).version
+    exports.version = JSON.parse(fs.readFileSync("#{ __dirname }/../package.json")).version
 catch err
     exports.version = '0.0.0'
 exports.createServer = createServer
