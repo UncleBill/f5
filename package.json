@@ -2,7 +2,7 @@
   "author": "island205 <island205@gmail.com> (ZhiCun)",
   "name": "f5",
   "description": "a light static sever which will reload page when there are changes in server side!",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "repository": {
     "type": "git",
     "url": "git://github.com/island205/f5.git"

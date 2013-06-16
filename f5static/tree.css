@@ -79,3 +79,6 @@ ul li .icon_holder {
     background-image:url(../images/new-tab-view.png);
     background-repeat:no-repeat;
 }
+.version{
+    color: #555;
+}

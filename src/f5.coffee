@@ -140,8 +140,9 @@ createServer = (config)->
                         res.writeHead 200,{"Content-Type":types["html"]}
                         _htmltext = renderDir renderPath, files
                         res.write ejs.render(getTempl("tree.ejs"), {
-                            _htmltext: _htmltext,
+                            _htmltext: _htmltext
                             title: realPath
+                            version: exports.version
                         })
                         res.end()
             else
@@ -178,6 +179,10 @@ createServer = (config)->
     server.listen _port
     console.log "f5 is on localhost:#{_port} now."
 
-exports.version = 'v0.0.6'
+
+try
+    exports.version = JSON.parse(fs.readFileSync('./package.json')).version
+catch err
+    exports.version = '0.0.0'
 exports.createServer = createServer
 # vim:set expandtab
