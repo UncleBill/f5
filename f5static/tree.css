@@ -10,6 +10,7 @@ ul li {
     list-style-type:none;
     border-bottom:1px solid #eee;
     padding:3px;
+    padding-left:20px;
 }
 .seleted_item{
     background:#99f;
@@ -38,9 +39,30 @@ ul li .icon_holder {
     height:16px;
     margin:0 3px;
 }
+.file-tree .file-entry{
+    position:relative;
+}
 .file-tree .delete{
-    color:#888;
+    display: inline-block;
+    position:absolute;
+    left:0px;
     cursor:pointer;
+    font-size:13px;
+    font-style: normal;
+    font-family:'DejaVu Sans', Arial, sans-serif;
+    height: 16px;
+    width: 16px;
+    border-radius: 16px;
+    text-align: center;
+    line-height: 16px;
+    background-color: red;
+    color: white;
+    opacity: 0; filter:alpha(opacity=0);
+    -webkit-transition: opacity 0.3s;
+}
+.file-tree .file-entry:hover .delete,
+.file-tree .file-entry:focus .delete{
+    opacity: 1; filter:alpha(opacity=100);
 }
 .file-tree .file .icon_holder{ background-position:0px -20px; }    /*defaultfile*/
 .file-tree .ft_zip .icon_holder{ background-position:0px -45px; }
