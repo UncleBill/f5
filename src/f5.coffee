@@ -23,11 +23,12 @@ insertTempl = (file, templ)->
     </\s*body\s*>
     (?![^]*</\s*body\s*>)           # not followed by any more </\s*body\s>
     ///gi
-    index = file.search matchrx
-    if not index
+
+    if not file.search matchrx
         file += templ.join ''
     else
-        file = file[0...index] + templ.join('\n') + file[index...]
+        file.replace matchrx, (match, offset, str)->
+            "#{templ.join('\n')}\n#{match}"
 
 insertSocket = ( file )->
     insertTempl( file, [SOCKET_TEMPLATE] )
