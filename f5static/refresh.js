@@ -21,7 +21,7 @@ var getFileAttachers = function(){
                 element:tag,
                 file:  decodeURIComponent(tag.src)
             })
-        } else if ( tag.href && tag.href !== localHref + "#" ){
+        } else if ( tag.href && tag.href.indexOf("#") !== localHref.length  ){
             attachers.push({
                 element:tag,
                 file:  decodeURIComponent(tag.href)
