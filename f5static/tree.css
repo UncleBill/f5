@@ -137,3 +137,9 @@ body .wrapper{
     margin:0;
     padding:0;
 }
+#quit{
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}

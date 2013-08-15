@@ -83,3 +83,12 @@ $("#parent").bind("click",function(){
     }
     location.href = location.origin
 })
+
+
+// kill f5
+// -------
+$("#quit").bind("click",function(){
+    socket.emit("quit");
+    window.open('', '_self', '');
+    window.close();
+});

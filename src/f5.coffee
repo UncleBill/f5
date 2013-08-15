@@ -102,9 +102,9 @@ renderDir = (realPath,files)->
                 else filetype = 'defaulttype'
 
             html.push ejs.render getTempl("file.ejs"), {
-                filetype:filetype,
-                _path:_path,
-                file:file
+                filetype : filetype,
+                _path    : _path[1..]       # ./foo/bar => /foo/bar
+                file     : file
             }
     html.push "</ul>"
     html.join ""
@@ -123,8 +123,7 @@ createServer = (config)->
             realPath = path.join( __dirname, '..', realPath )
             #console.log 'static request',realPath
 
-        ### path exist ###
-        fs.exists realPath,(exists)->
+        fs.exists realPath, (exists)->
             #console.log( 'handle path', realPath )
             if not exists
                 res.writeHead 404,{"Content-Type":"text/html"}
@@ -167,12 +166,16 @@ createServer = (config)->
     _io = {sockets} = io.listen server, "log level":0
     sockets.on "connection",(socket)->
         _sockets = _sockets.filter (s)->
-            return  not s['disconnected']
+            return not s['disconnected']
         _sockets.push socket
         socket.on "delete",(file)->
             f5DeleteFile file
         socket.on "rename",(data)->
             f5Rename data
+
+        socket.on 'quit', (data)->
+            console.log('f5 quiting...')
+            process.exit(0)
 
     for change in ["fileCreated","fileModified","fileDeleted"]
         do (chg = change) ->
