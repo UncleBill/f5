@@ -91,7 +91,7 @@ renderDir = (realPath,files)->
         if fs.statSync(_path).isDirectory()
             _files = fs.readdirSync(_path)
             html.push ejs.render getTempl("dir.ejs"), {
-                _path  : _path,
+                _path  : _path[1..]       # ./foo/bar => /foo/bar
                 file   : file,
                 subdir : renderDir _path, _files
             }
