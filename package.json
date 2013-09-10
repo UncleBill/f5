@@ -20,5 +20,11 @@
   "optionalDependencies": {},
   "engines": {
     "node": "*"
+  },
+  "scripts":{
+      "test":  "node debug bin/f5",
+      "build": "coffee -co lib/ src/",
+      "watch": "coffee -cwo lib/ src/",
+      "install": "npm install -g"
   }
 }
