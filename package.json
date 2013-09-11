@@ -22,9 +22,9 @@
     "node": "*"
   },
   "scripts":{
-      "test":  "node debug bin/f5",
+      "test":  "node bin/f5",
+      "debug":  "node debug bin/f5",
       "build": "coffee -co lib/ src/",
-      "watch": "coffee -cwo lib/ src/",
-      "install": "npm install -g"
+      "watch": "coffee -cwo lib/ src/"
   }
 }
