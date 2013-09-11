@@ -13,10 +13,16 @@ SOCKET_TEMPLATE="""
     <script src="/f5static/refresh.js"></script>
 """
 
+
+
+tempCache = {}
 getTempl = (file)->
+    if file of tempCache
+        return tempCache[file]
+
     templDir = path.join(__dirname,'..','./template/')
     file = templDir + file
-    return "" + fs.readFileSync(file)
+    tempCache[file] = "#{fs.readFileSync(file)}"
 
 insertTempl = (file, templ)->
     matchrx = ///
