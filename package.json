@@ -22,8 +22,8 @@
     "node": "*"
   },
   "scripts":{
-      "test":  "node bin/f5",
-      "debug":  "node debug bin/f5",
+      "test":  "npm run build && node bin/f5",
+      "debug":  "npm run build && node debug bin/f5",
       "build": "coffee -co lib/ src/",
       "watch": "coffee -cwo lib/ src/"
   }
