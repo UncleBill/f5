@@ -3,7 +3,7 @@ node_js: 0.8
 before_install:
   - "npm install -g coffee-script"
   - "npm install -g"
-script: "cake build"
+script: "npm run build"
 notifications:
   email: true
 branches:
