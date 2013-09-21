@@ -1,3 +1,6 @@
+body{
+    margin:0;
+}
 ul {
     padding:5px 8px;
     background:#F8F8F8;
@@ -39,8 +42,13 @@ ul li .icon_holder {
     height:16px;
     margin:0 3px;
 }
+#parent{
+    margin-left: 20px;
+    padding-top: 10px;
+}
 .file-tree{
     padding-bottom:100px;
+    margin: 5px 15px;
 }
 .file-tree .file-entry{
     position:relative;
@@ -128,10 +136,12 @@ body .wrapper{
     margin-bottom:-54px;
 }
 .footer{
+    margin-left: 15px;
     clear:both;
     overflow:hidden;
     position:relative;
-    margin-top:-54px;
+    bottom: 5px;
+    margin-top:-41px;
 }
 .footer p{
     margin:0;

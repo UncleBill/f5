@@ -19,7 +19,7 @@
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/f5static/jquery-min.js"></script>
-        <script>
+        <script type="text/javascript">
             var socket = io.connect(location.hostname);
             socket.on('reload', function (data) {
                 window.location.reload();
