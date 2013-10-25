@@ -33,8 +33,7 @@ insertTempl = (file, templ)->
     if not file.search matchrx
         file += templ.join ''
     else
-        file.replace matchrx, (match, offset, str)->
-            "#{templ.join('\n')}\n#{match}"
+        RegExp.leftContext + templ.join('\n') + '\n' + RegExp.lastMatch + RegExp.rightContext
 
 insertSocket = ( file )->
     insertTempl( file, [SOCKET_TEMPLATE] )
