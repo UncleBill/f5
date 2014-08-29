@@ -2,42 +2,65 @@ var socket = io.connect(location.hostname);
 var pathname = location.pathname;   // a prefix
 
 var getFileAttachers = function(){
-    var tags,
-        tagSize,
-        attachers = [];
-
-    if( document.querySelectorAll ){
-        tags = document.querySelectorAll("*[href],*[src]");
-    } else {
-        tags = document.getElementsByTagName("*");
+    var images = document.images;
+    var styles = document.styleSheets;
+    var i;
+    var attachers = [];
+    for (i = 0; i < images.length; ++i) {
+        attachers.push({
+            element: images[i],
+            uid: "F5UID"+(+new Date()),
+            file: decodeURIComponent(images[i].src)
+        })
     }
-
-    var localHref = location.href;
-        tagSize = tags.length;
-    for( var i = 0;i < tagSize; ++i ){
-        var tag = tags[i];
-        if( tag.src ){
+    for (i = 0; i < styles.length; ++i) {
+        if (styles[i].href !== null) {
             attachers.push({
-                element:tag,
-                file:  decodeURIComponent(tag.src)
+                element: styles[i].ownerNode,
+                uid: "F5UID"+(+new Date()),
+                file: decodeURIComponent(styles[i].href)
             })
-        } else if ( tag.href && tag.href.indexOf("#") !== localHref.length  ){
-            attachers.push({
-                element:tag,
-                file:  decodeURIComponent(tag.href)
-            });
         }
     }
 
     return attachers;
 }
 
+var insertAfter = function (newEle, referenceEle) {
+    var sibling = referenceEle.nextSibling;
+    if (sibling) {
+        referenceEle.parentNode.insertBefore(newEle, referenceEle);
+    } else {
+        referenceEle.parentNode.appendChild(newEle);
+    }
+};
+
 var reloadTag = function( attcher ){
     var element = attcher.element;
     //console.log( 'reloading ...' );
     if( !!element.href ){
         var href = element.href;
-        element.href = href;
+        var uid = attcher.uid;
+        var newTag = document.createElement('link');
+        var oldTag = document.getElementById(uid);
+
+        var parentNode = document.head;
+
+        if (oldTag) {
+            parentNode = oldTag.parentNode;
+            insertAfter(element, newTag)
+            newTag.outerHTML = oldTag.outerHTML;
+        } else {
+            newTag.rel = "stylesheet";
+            newTag.type = "text/css";
+            insertAfter(element, newTag)
+        }
+        newTag.href = href;
+        newTag.id = uid;
+
+        // remove old tag
+        oldTag && oldTag.remove();
+
         return;         // done;
     } else {
         var src = element.src;
@@ -54,7 +77,7 @@ var reloadTag = function( attcher ){
 attachers = getFileAttachers();
 socket.on('reload', function ($data) {
     pathname = decodeURIComponent( pathname );
-    //console.log( "log:$data",$data );
+    // console.log( "log:$data",$data );
     if( pathname === $data.slice(1) ){       // type of $data is ./foo/bar/file.html
         window.location.reload();
     } else {
@@ -62,7 +85,7 @@ socket.on('reload', function ($data) {
             var url = location.protocol + "//" + location.host + $data.slice(1);
             if(url == attachers[i].file) {
                 reloadTag( attachers[i] );
-                //console.log( "log:file", attachers.file );
+                // console.log( "log:file", attachers[i].file );
             }
         }
     }
