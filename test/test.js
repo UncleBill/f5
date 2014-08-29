@@ -1,1 +1,1 @@
-document.title = Date.toLocaleDateString();
+document.title = Date().toLocaleString();
