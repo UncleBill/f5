@@ -29,7 +29,7 @@ var getFileAttachers = function(){
 var insertAfter = function (newEle, referenceEle) {
     var sibling = referenceEle.nextSibling;
     if (sibling) {
-        referenceEle.parentNode.insertBefore(newEle, referenceEle);
+        referenceEle.parentNode.insertBefore(newEle, referenceEle.nextSibling);
     } else {
         referenceEle.parentNode.appendChild(newEle);
     }
@@ -48,12 +48,12 @@ var reloadTag = function( attcher ){
 
         if (oldTag) {
             parentNode = oldTag.parentNode;
-            insertAfter(element, newTag)
+            insertAfter(newTag, element)
             newTag.outerHTML = oldTag.outerHTML;
         } else {
             newTag.rel = "stylesheet";
             newTag.type = "text/css";
-            insertAfter(element, newTag)
+            insertAfter(newTag, element)
         }
         newTag.href = href;
         newTag.id = uid;
