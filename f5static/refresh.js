@@ -4,12 +4,13 @@ var pathname = location.pathname;   // a prefix
 var getFileAttachers = function(){
     var images = document.images;
     var styles = document.styleSheets;
+    var scripts = document.scripts;
     var i;
     var attachers = [];
     for (i = 0; i < images.length; ++i) {
         attachers.push({
             element: images[i],
-            uid: "F5UID"+(+new Date()),
+            uid: "F5UID" + (+ new Date()),
             file: decodeURIComponent(images[i].src)
         })
     }
@@ -17,10 +18,17 @@ var getFileAttachers = function(){
         if (styles[i].href !== null) {
             attachers.push({
                 element: styles[i].ownerNode,
-                uid: "F5UID"+(+new Date()),
+                uid: "F5UID" + (+ new Date()),
                 file: decodeURIComponent(styles[i].href)
             })
         }
+    }
+    for (i = 0; i < scripts.length; ++i) {
+        attachers.push({
+            element: scripts[i],
+            uid: "F5UID" + (+ new Date()),
+            file: decodeURIComponent( scripts[i].src )
+        })
     }
 
     return attachers;
@@ -64,10 +72,10 @@ var reloadTag = function( attcher ){
         return;         // done;
     } else {
         var src = element.src;
-        var pieces = src.split(".");
-        var ext = pieces[ pieces.length - 1 ];
-        if( ext === "js" ){
-            window.location.reload();       // if changed file is js, reload page
+
+        // Refresh page, if JavaScript
+        if(element.tagName.toLowerCase() === "script"){
+            window.location.reload();
             return;
         }
         element.src = src;
