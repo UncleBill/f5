@@ -94,7 +94,7 @@ createServer = (config)->
             else  # file
                 ext = path.extname realPath
                 ext = ext[1..]
-                res.setHeader "Content-Type",types[ext] or "text/plian"
+                res.setHeader "Content-Type",types[ext] or "text/plain"
 
                 fs.readFile realPath,"binary",(err,file)->
                     if err
