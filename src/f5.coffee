@@ -5,8 +5,10 @@ url     = require "url"
 fs      = require "fs"
 path    = require "path"
 {types} = require "mime"
+utils = require('util')
+querystring = require('querystring')
 
-watcher = require("watch-tree-maintained").watchTree ".", {"ignore":/(.*\/\.\w+|.*~$)/}
+watcher = require("watch-tree-maintained").watchTree ".", {ignore:/(.*\/\.\w+|.*~$)/}
 
 SOCKET_TEMPLATE="""
     <script src="/socket.io/socket.io.js"></script>
@@ -114,11 +116,65 @@ renderDir = (realPath,files)->
     html.push "</ul>"
     html.join ""
 
+
+cpFile = (src, tg) ->
+    ensureExists path.dirname( tg )
+    rs = fs.createReadStream( src )
+    ws = fs.createWriteStream( tg )
+    console.log(src, "->", tg)
+    debugger
+    rs.pipe( ws )
+
+cp2Folder = (tgFolder, src, cb) ->
+    ensureExists( tgFolder )
+    tg = path.join(tgFolder, src)
+    cpFile(src, tg)
+    cb && cb(src, tg)
+
+ensureExists = (dir) ->
+    exists = fs.existsSync(dir)
+    parentDir = path.join.apply(null, dir.split( path.sep ).slice(0, -1) )
+    if not exists
+        ensureExists( parentDir )
+        fs.mkdirSync( dir )
+
 createServer = (config)->
     _path = config.path
     _port = config.port
     server = http.createServer (req,res)->
         pathname = url.parse(req.url).pathname
+        if  pathname.match(/^\/f5api\//)
+            if req.method == 'POST'
+                text = ''
+                req.on('data',  (chunk) ->
+                    text += chunk
+                )
+                req.on('end', ()->
+                    console.log text
+                    files = querystring.parse( text )['sel']
+                    if not files
+                        res.end('No file packed')
+                        return
+                    if not Array.isArray(files)
+                        files = new Array( files )
+                    fs.rmdir('./f5picker/', ()->
+                        debugger
+                    )
+                    res.write "<ul>"
+                    for file in files
+                        debugger
+                        cp2Folder( './f5picker/', './'+file, (src, tg)->
+                            src = path.normalize( src )
+                            tg = path.normalize( tg )
+                            res.write "<li>F5: copy <b>#{src}</b> to <b>#{tg}</b>!</li>"
+                        )
+                    res.write "</ul>"
+                    # res.write ( utils.inspect files )
+                    res.end()
+                )
+
+            else if req.method.toUpperCase() == 'GET'
+                res.write 'f5api GET respone'
         realPath = decodeURIComponent _path+pathname
 
         renderPath = realPath

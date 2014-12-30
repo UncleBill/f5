@@ -50,6 +50,10 @@ ul li .icon_holder {
     padding-bottom:100px;
     margin: 5px 15px;
 }
+.splited .file-tree {
+    width: 47%;
+    float: left;
+}
 .file-tree .file-entry{
     position:relative;
 }

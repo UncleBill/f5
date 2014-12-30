@@ -7,10 +7,21 @@
     </head>
     <body>
         <div class="wrapper">
-            <div id="parent">parent folder</div>
-            <div id="file-tree" class="file-tree">
-                <%- _htmltext %>
-            </div>
+            <form id="pickForm" action="/f5api/pack" method="post" accept-charset="utf-8">
+
+                <div id="parent">parent folder</div>
+                <div id="file-tree" class="file-tree">
+                    <%- _htmltext %>
+                </div>
+                <p>
+                    <input type="submit" value="pack">
+                    <input type="reset" value='clear'>
+                </p>
+            </form>
+            <form id="pickResultForm" action="/f5api/pack" method="post" accept-charset="utf-8">
+                <div id="pick-file-tree" class="file-tree"></div>
+                <div id="msg"></div>
+            </form>
         </div>
         <div id="quit">Quit f5</div>
         <div class="footer">
@@ -26,5 +37,6 @@
             });
         </script>
         <script src="/f5static/tree.js"></script>
+        <script src="/f5static/picker.js"></script>
     </body>
 </html>
