@@ -71,6 +71,8 @@ sortFiles = (realPath,files)->
     if realPath[realPath.length-1] isnt "/"
         realPath += "/"
     for file in files
+        if not fs.existsSync(realPath+file)
+            continue
         if fs.statSync(realPath+file).isDirectory()
             _folders.push file
         else
@@ -118,6 +120,7 @@ renderDir = (realPath,files)->
 
 
 cpFile = (src, tg) ->
+    src = path.normalize(src)
     ensureExists path.dirname( tg )
     rs = fs.createReadStream( src )
     ws = fs.createWriteStream( tg )
@@ -143,8 +146,8 @@ createServer = (config)->
     _port = config.port
     server = http.createServer (req,res)->
         pathname = url.parse(req.url).pathname
-        if  pathname.match(/^\/f5api\//)
-            if req.method == 'POST'
+        if req.method == 'POST'
+            if  pathname.match /^\/f5api\//
                 text = ''
                 req.on('data',  (chunk) ->
                     text += chunk
@@ -189,7 +192,7 @@ createServer = (config)->
             if not exists
                 res.writeHead 404,{"Content-Type":"text/html"}
                 res.write ejs.render(getTempl("404.ejs"),{
-                    _htmltext: "404 Not Found"
+                    _htmltext: "404 Not Found: url " + req.url
                     title: "404 Not Found"
                 })
                 res.end()
