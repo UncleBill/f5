@@ -33,16 +33,9 @@ renderDir = (realPath,files)->
                 subdir : renderDir _path, _files
             }
         else
-            _extname = path.extname( file )
-            _extname = if _extname.length then _extname.substr 1 else ""
-            filetype = ''
-            switch _extname
-                when 'css'  then filetype = 'css'
-                when 'html','htm' then filetype = 'html'
-                when 'js','coffee'   then filetype = 'javascript'
-                when 'jpg','jpeg','psd','gif','png' then filetype = 'image'
-                when 'rar','zip','7z' then filetype = 'zipfile'
-                else filetype = 'defaulttype'
+            ext = path.extname( file )
+            ext = ext[1..]
+            filetype = util.fileCategorize ext
 
             html.push ejs.render util.getTempl("file.ejs"), {
                 filetype : filetype,
@@ -98,12 +91,9 @@ createServer = (config)->
                             root_path: fs.realpathSync('.')
                         })
                         res.end()
-            else
+            else  # file
                 ext = path.extname realPath
-                if ext
-                    ext = ext[1..]
-                else
-                    ext = "unknown"
+                ext = ext[1..]
                 res.setHeader "Content-Type",types[ext] or "text/plian"
 
                 fs.readFile realPath,"binary",(err,file)->

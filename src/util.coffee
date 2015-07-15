@@ -91,6 +91,18 @@ _ensureExists = (dir) ->
         _ensureExists( parentDir )
         fs.mkdirSync( dir )
 
+fileCategorize = (ext) ->
+    filetype = ''
+    switch ext
+        when 'css'  then filetype = 'css'
+        when 'html','htm' then filetype = 'html'
+        when 'js','coffee'   then filetype = 'javascript'
+        when 'jpg','jpeg','gif','png' then filetype = 'image'
+        when 'psd' then filetype = 'psd'
+        when 'rar','zip','7z' then filetype = 'zipfile'
+        else filetype = 'defaulttype'
+    return filetype
+
 
 exports.getTempl = getTempl
 exports.insertSocket = insertSocket
@@ -98,6 +110,7 @@ exports.res500 = res500
 exports.sortFiles = sortFiles
 exports.cp2Folder = cp2Folder
 exports.rmFile = rmFile
+exports.fileCategorize = fileCategorize
 
 try
     exports.version = JSON.parse(fs.readFileSync("#{ __dirname }/../package.json")).version
