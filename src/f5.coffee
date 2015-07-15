@@ -64,7 +64,7 @@ createServer = (config)->
 
         renderPath = realPath
         # redirect to f5static file
-        if (realPath.split "/")[1] == 'f5static'
+        if /^\/f5static\b/.test pathname
             # f5static absolute
             realPath = path.join( __dirname, '..', realPath )
             #console.log 'static request',realPath
