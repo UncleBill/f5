@@ -207,6 +207,7 @@ createServer = (config)->
                             _htmltext: _htmltext
                             title: realPath
                             version: exports.version
+                            root_path: fs.realpathSync('.')
                         })
                         res.end()
             else
