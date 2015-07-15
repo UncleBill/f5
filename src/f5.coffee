@@ -7,8 +7,10 @@ path    = require "path"
 {types} = require "mime"
 utils = require('util')
 querystring = require('querystring')
+run = require './run'
 
-watcher = require("watch-tree-maintained").watchTree ".", {ignore:/(.*\/\.\w+|.*~$)/}
+watch = require('node-watch')
+ignore_re = /([\\\/]\.|.*~$)/
 
 SOCKET_TEMPLATE="""
     <script src="/socket.io/socket.io.js"></script>
@@ -242,12 +244,22 @@ createServer = (config)->
             console.log('f5 quiting...')
             process.exit(0)
 
-    for change in ["fileCreated","fileModified","fileDeleted"]
-        do (chg = change) ->
-            watcher.on chg, ( file )->
-                for socket in _sockets
-                    socket.emit "reload",file
-                    # console.log 'emit reload', '--', file, '--', +(new Date), '--' ,chg
+    watch '.', (filename)->
+        normalize_file = './' + filename.replace(/\\/g, '/')
+        if ignore_re.test(normalize_file)
+            return
+        console.log 'changed file:',normalize_file
+        debugger
+        if filename == 'f5file.js'
+            console.log '[f5]', 'Reload f5file.'
+            f5path = path.resolve('.', 'f5file.js')
+            delete require.cache[require.resolve(f5path)]
+            run = require(f5path)
+        run.do filename
+        for socket in _sockets
+            socket.emit 'reload', normalize_file
+            console.log 'emit reload', '--', normalize_file, '--', (new Date).toString()
+        return
 
     server.listen _port
     console.log "f5 is on localhost:#{_port} now."
