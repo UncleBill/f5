@@ -5,7 +5,7 @@ url     = require "url"
 fs      = require "fs"
 path    = require "path"
 {types} = require "mime"
-utils = require('util')
+util    = require './util'
 querystring = require('querystring')
 run = require './run'
 
@@ -19,71 +19,8 @@ SOCKET_TEMPLATE="""
 
 
 
-tempCache = {}
-getTempl = (file)->
-    if file of tempCache
-        return tempCache[file]
-
-    templDir = path.join(__dirname,'..','./template/')
-    file = templDir + file
-    tempCache[file] = "#{fs.readFileSync(file)}"
-
-insertTempl = (file, templ)->
-    matchrx = ///
-    </\s*body\s*>
-    (?![^]*</\s*body\s*>)           # not followed by any more </\s*body\s>
-    ///gi
-
-    if not file.search matchrx
-        file += templ.join ''
-    else
-        RegExp.leftContext + templ.join('\n') + '\n' + RegExp.lastMatch + RegExp.rightContext
-
-insertSocket = ( file )->
-    insertTempl( file, [SOCKET_TEMPLATE] )
-
-res500 = (err,res)->
-    res.writeHead 500,{"Content-Type":"text/plain"}
-    res.end err
-
-f5DeleteFile = (file)->
-    fs.exists file,( isexists )->
-        if isexists
-            fs.unlinkSync file,(err)->
-                throw err if err
-        else return
-
-# http://stackoverflow.com/questions/4340227/sort-mixed-alpha-numeric-array
-sortAlphaNum = (a, b)->
-    reAlpha = /[^a-zA-Z]/g
-    reNumer = /[^0-9]/g
-    aAlpha = a.replace(reAlpha, "")
-    bAlpha = b.replace(reAlpha, "")
-    if aAlpha is bAlpha
-        aNumber = parseInt(a.replace(reNumer, ""), 10)
-        bNumber = parseInt(b.replace(reNumer, ""), 10)
-        `aNumber === bNumber ? 0 : aNumber > bNumber ? 1 : -1`
-    else
-        `aAlpha > bAlpha ? 1 : -1`
-
-sortFiles = (realPath,files)->
-    _folders = []
-    _files   = []
-    files = files.sort sortAlphaNum
-    if realPath[realPath.length-1] isnt "/"
-        realPath += "/"
-    for file in files
-        if not fs.existsSync(realPath+file)
-            continue
-        if fs.statSync(realPath+file).isDirectory()
-            _folders.push file
-        else
-            _files.push file
-
-    _folders.concat _files
-
 renderDir = (realPath,files)->
-    files = sortFiles(realPath,files)
+    files = util.sortFiles(realPath,files)
 
     if realPath[realPath.length-1] isnt "/"
         realPath += "/"
@@ -95,7 +32,7 @@ renderDir = (realPath,files)->
         _path = realPath + file
         if fs.statSync(_path).isDirectory()
             _files = fs.readdirSync(_path)
-            html.push ejs.render getTempl("dir.ejs"), {
+            html.push ejs.render util.getTempl("dir.ejs"), {
                 _path  : _path[1..]       # ./foo/bar => /foo/bar
                 file   : file,
                 subdir : renderDir _path, _files
@@ -112,7 +49,7 @@ renderDir = (realPath,files)->
                 when 'rar','zip','7z' then filetype = 'zipfile'
                 else filetype = 'defaulttype'
 
-            html.push ejs.render getTempl("file.ejs"), {
+            html.push ejs.render util.getTempl("file.ejs"), {
                 filetype : filetype,
                 _path    : _path[1..]       # ./foo/bar => /foo/bar
                 file     : file
@@ -120,28 +57,6 @@ renderDir = (realPath,files)->
     html.push "</ul>"
     html.join ""
 
-
-cpFile = (src, tg) ->
-    src = path.normalize(src)
-    ensureExists path.dirname( tg )
-    rs = fs.createReadStream( src )
-    ws = fs.createWriteStream( tg )
-    console.log(src, "->", tg)
-    debugger
-    rs.pipe( ws )
-
-cp2Folder = (tgFolder, src, cb) ->
-    ensureExists( tgFolder )
-    tg = path.join(tgFolder, src)
-    cpFile(src, tg)
-    cb && cb(src, tg)
-
-ensureExists = (dir) ->
-    exists = fs.existsSync(dir)
-    parentDir = path.join.apply(null, dir.split( path.sep ).slice(0, -1) )
-    if not exists
-        ensureExists( parentDir )
-        fs.mkdirSync( dir )
 
 createServer = (config)->
     _path = config.path
@@ -168,7 +83,7 @@ createServer = (config)->
                     res.write "<ul>"
                     for file in files
                         debugger
-                        cp2Folder( './f5picker/', './'+file, (src, tg)->
+                        util.cp2Folder( './f5picker/', './'+file, (src, tg)->
                             src = path.normalize( src )
                             tg = path.normalize( tg )
                             res.write "<li>F5: copy <b>#{src}</b> to <b>#{tg}</b>!</li>"
@@ -193,7 +108,7 @@ createServer = (config)->
             #console.log( 'handle path', realPath )
             if not exists
                 res.writeHead 404,{"Content-Type":"text/html"}
-                res.write ejs.render(getTempl("404.ejs"),{
+                res.write ejs.render(util.getTempl("404.ejs"),{
                     _htmltext: "404 Not Found: url " + req.url
                     title: "404 Not Found"
                 })
@@ -201,11 +116,11 @@ createServer = (config)->
             else if fs.statSync(realPath).isDirectory()
                 fs.readdir realPath,(err,files)->
                     if err
-                        res500 err,res
+                        util.res500 err,res
                     else
                         res.writeHead 200,{"Content-Type":types["html"]}
                         _htmltext = renderDir renderPath, files
-                        res.write ejs.render(getTempl("tree.ejs"), {
+                        res.write ejs.render(util.getTempl("tree.ejs"), {
                             _htmltext: _htmltext
                             title: realPath
                             version: exports.version
@@ -222,11 +137,11 @@ createServer = (config)->
 
                 fs.readFile realPath,"binary",(err,file)->
                     if err
-                        res500 err,res
+                        util.res500 err,res
                     else
                         res.writeHead 200,"Ok"
                         if ext is "html" or ext is "htm"
-                            file = insertSocket file
+                            file = util.insertSocket file
                         res.write file,"binary"
                         res.end()
     _sockets = []
@@ -236,7 +151,7 @@ createServer = (config)->
             return not s['disconnected']
         _sockets.push socket
         socket.on "delete",(file)->
-            f5DeleteFile file
+            util.rmFile file
         socket.on "rename",(data)->
             f5Rename data
 
@@ -265,9 +180,6 @@ createServer = (config)->
     console.log "f5 is on localhost:#{_port} now."
 
 
-try
-    exports.version = JSON.parse(fs.readFileSync("#{ __dirname }/../package.json")).version
-catch err
-    exports.version = '0.0.0'
+exports.version = util.version
 exports.createServer = createServer
 # vim:set expandtab
