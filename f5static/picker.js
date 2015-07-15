@@ -1,4 +1,5 @@
 var $pickForm = $("#pickForm");
+var rootpath = $("#rootPath").attr('data-root');
 $pickForm.submit(function (e) {
     e.preventDefault();
     e.returnValue = false;
@@ -7,7 +8,7 @@ $pickForm.submit(function (e) {
     var $sel = $this.find("[name=sel]:checked");
     $.ajax({
         type: 'post',
-        url: '/f5api/pack',
+        url: '/f5api?action=pick',
         data: $pickForm.serialize(),
         dataType: 'text',
         success: function (htmlcode) {
@@ -17,15 +18,46 @@ $pickForm.submit(function (e) {
 })
 
 $pickForm.on('change', function () {
-    var $sel = $( this ).find("[name=sel]:checked");
-    var files = [];
+    var $sel = $pickForm.find("[name=sel]:checked");
+    var $folders = $pickForm.find("[name=selfolder]:checked");
+    var files = [],
+        folders = [];
     var tree = {};
     $sel.each(function () {
         files.push( this.value );
         fp2tree(this.value, tree);
     });
-    console.log(tree);
-    console.log(buildHtml(tree));
+    $folders.each(function () {
+        folders.push(this.value);
+    })
+    // console.log(tree);
+    var data = {
+        tree: tree,
+        files: files,
+        folders: folders
+    };
+    if (window.localStorage) {
+        localStorage.setItem(rootpath, JSON.stringify(data))
+    }
+    // console.log(buildHtml(tree));
+    renderTree(tree, files);
+});
+
+restore();
+
+function restore() {
+    var data = JSON.parse(localStorage.getItem(rootpath));
+    if (!data || !data.tree) {
+        return;
+    }
+    renderTree(data.tree, data.files);
+    var checkboxs = data.files.concat( data.folders );
+    for (var i = 0,len = checkboxs.length; i < len; ++i) {
+        $('input[value="'+checkboxs[i]+'"]').prop('checked', true);
+    }
+}
+
+function renderTree(tree, files) {
     var htmlcode = "<p>Total: " + files.length + "</p>";
     htmlcode += buildHtml( tree );
     if (files.length) {
@@ -35,7 +67,7 @@ $pickForm.on('change', function () {
         $(".wrapper").removeClass('splited');
         $("#pick-file-tree").html('');
     }
-})
+}
 
 
 $pickForm.find("[name=selfolder]").click(function () {
@@ -75,7 +107,6 @@ function buildHtml(tree) {
     return codepool.join('\n');
 }
 
-
 function buildpool(tree, htmlArr, deep) {
     var subtree;
     for (var file in tree) {
@@ -95,9 +126,11 @@ function buildpool(tree, htmlArr, deep) {
             }
         }
     }
+
+    function indent(n) {
+        return (new Array(n+1)).join("  ");
+    }
+
     return htmlArr
 }
 
-function indent(n) {
-    return (new Array(n+1)).join("  ");
-}

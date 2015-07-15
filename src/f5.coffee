@@ -6,17 +6,12 @@ fs      = require "fs"
 path    = require "path"
 {types} = require "mime"
 util    = require './util'
+run     = require './run'
+api     = require './api'
 querystring = require('querystring')
-run = require './run'
 
 watch = require('node-watch')
 ignore_re = /([\\\/]\.|.*~$)/
-
-SOCKET_TEMPLATE="""
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/f5static/refresh.js"></script>
-"""
-
 
 
 renderDir = (realPath,files)->
@@ -62,50 +57,26 @@ createServer = (config)->
     _path = config.path
     _port = config.port
     server = http.createServer (req,res)->
-        pathname = url.parse(req.url).pathname
-        if req.method == 'POST'
-            if  pathname.match /^\/f5api\//
-                text = ''
-                req.on('data',  (chunk) ->
-                    text += chunk
-                )
-                req.on('end', ()->
-                    console.log text
-                    files = querystring.parse( text )['sel']
-                    if not files
-                        res.end('No file packed')
-                        return
-                    if not Array.isArray(files)
-                        files = new Array( files )
-                    fs.rmdir('./f5picker/', ()->
-                        debugger
-                    )
-                    res.write "<ul>"
-                    for file in files
-                        debugger
-                        util.cp2Folder( './f5picker/', './'+file, (src, tg)->
-                            src = path.normalize( src )
-                            tg = path.normalize( tg )
-                            res.write "<li>F5: copy <b>#{src}</b> to <b>#{tg}</b>!</li>"
-                        )
-                    res.write "</ul>"
-                    # res.write ( utils.inspect files )
-                    res.end()
-                )
+        urlobj = url.parse req.url
+        pathname = urlobj.pathname
+        if  /^\/f5api\b/.test pathname
+            switch req.method.toUpperCase()
+                when 'POST'
+                    api.postHandler(req, res)
+                when 'GET'
+                   api.getHandler(req,res)
 
-            else if req.method.toUpperCase() == 'GET'
-                res.write 'f5api GET respone'
+        # relative path
         realPath = decodeURIComponent _path+pathname
 
         renderPath = realPath
         # redirect to f5static file
-        # console.log 'before split',realPath
         if (realPath.split "/")[1] == 'f5static'
+            # f5static absolute
             realPath = path.join( __dirname, '..', realPath )
             #console.log 'static request',realPath
 
         fs.exists realPath, (exists)->
-            #console.log( 'handle path', realPath )
             if not exists
                 res.writeHead 404,{"Content-Type":"text/html"}
                 res.write ejs.render(util.getTempl("404.ejs"),{
@@ -144,6 +115,7 @@ createServer = (config)->
                             file = util.insertSocket file
                         res.write file,"binary"
                         res.end()
+
     _sockets = []
     _io = {sockets} = io.listen server, "log level":0
     sockets.on "connection",(socket)->
