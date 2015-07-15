@@ -8,7 +8,7 @@ if fs.existsSync 'f5file.js'
     try
         worker = require worker_path
     catch reqerr
-        console.log '[require error message]' reqerr.message
+        console.log '[require error message]', reqerr.message
         return
 else
     worker = {
