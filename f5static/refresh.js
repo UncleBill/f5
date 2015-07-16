@@ -1,7 +1,7 @@
 var socket = io.connect(location.hostname);
 var pathname = location.pathname;   // a prefix
 
-var getFileAttachers = function(){
+var getFileAttachers = function() {
     var images = document.images;
     var styles = document.styleSheets;
     var scripts = document.scripts;
@@ -17,7 +17,7 @@ var getFileAttachers = function(){
     for (i = 0; i < styles.length; ++i) {
         if (styles[i].href !== null) {
             attachers.push({
-                element: styles[i].ownerNode,
+                element: styles[i].ownerNode || styles[i].owningElement,
                 uid: "F5UID" + (+ new Date()),
                 file: decodeURIComponent(styles[i].href)
             })
@@ -45,31 +45,14 @@ var insertAfter = function (newEle, referenceEle) {
 
 var reloadTag = function( attcher ){
     var element = attcher.element;
+    if (!element) {
+        return;
+    }
     //console.log( 'reloading ...' );
     if( !!element.href ){
-        var href = element.href;
-        var uid = attcher.uid;
-        var newTag = document.createElement('link');
-        var oldTag = document.getElementById(uid);
-
-        var parentNode = document.head;
-
-        if (oldTag) {
-            parentNode = oldTag.parentNode;
-            insertAfter(newTag, element)
-            newTag.outerHTML = oldTag.outerHTML;
-        } else {
-            newTag.rel = "stylesheet";
-            newTag.type = "text/css";
-            insertAfter(newTag, element)
-        }
-        newTag.href = href;
-        newTag.id = uid;
-
-        // remove old tag
-        oldTag && oldTag.remove();
-
-        return;         // done;
+        var href = element.getAttribute('href');
+        element.href = href;
+        return element;
     } else {
         var src = element.src;
 
@@ -79,6 +62,7 @@ var reloadTag = function( attcher ){
             return;
         }
         element.src = src;
+        return element;
     }
 }
 
@@ -92,15 +76,9 @@ socket.on('reload', function ($data) {
         for(var i = 0; i < attachers.length; ++i){
             var url = location.protocol + "//" + location.host + $data.slice(1);
             if(url == attachers[i].file) {
-                reloadTag( attachers[i] );
-                // console.log( "log:file", attachers[i].file );
+                var element = reloadTag( attachers[i] );
+                attachers[i].element = element;
             }
         }
     }
 });
-
-//;(function(){
-    //setTimeout(function(){
-        //alert('reload script');
-    //},100);
-//})();
