@@ -10,10 +10,10 @@
   "main": "index",
   "bin":{"f5":"./bin/f5"},
   "dependencies": {
-    "socket.io":"0.9.1-1",
+    "socket.io":"1.7.2",
     "mime":"*",
     "colors":"*",
-    "ejs":"0.8.3",
+    "ejs":"2.5.5",
     "node-watch": "*"
   },
   "devDependencies": {},
